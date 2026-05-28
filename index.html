@@ -51,9 +51,13 @@
 
     .mobile-menu {
       display: none; position: fixed; top: 70px; left: 0; right: 0;
-      background: var(--nav-bg); z-index: 999; flex-direction: column; padding: 10px 0;
+      background: var(--nav-bg); z-index: 999; padding: 10px 0;
+    }
+    .mobile-menu.open {
+      display: block;
     }
     .mobile-menu a {
+      display: block;
       color: var(--nav-text); text-decoration: none; padding: 16px 40px;
       font-size: 1rem; letter-spacing: 1px; border-bottom: 1px solid #2d2a3e;
       cursor: pointer; transition: background 0.2s;
@@ -1229,7 +1233,7 @@ $(document).ready(function () {
     $('#page-' + pageId).addClass('active');
     $('.nav-btn').removeClass('active');
     $('.nav-btn[data-page="' + pageId + '"]').addClass('active');
-    $('#mobileMenu').hide();
+    $('#mobileMenu').removeClass('open');
     
     if (pageId === 'home') {
       $('#typingCursor').show();
@@ -1245,7 +1249,7 @@ $(document).ready(function () {
 
   /* 햄버거 메뉴 */
   $('#hamburger').click(function () {
-    $('#mobileMenu').toggle();
+    $('#mobileMenu').toggleClass('open');
   });
 
   /* 탭 전환 */
