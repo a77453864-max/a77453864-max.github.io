@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>김남진 | 포트폴리오</title>
+  <script src="jquery-4.0.0.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8f8f6;
+      --text: #1a1a1a;
+      --text-sub: #666;
+      --accent1: #7c3aed;
+      --accent2: #a78bfa;
+      --accent3: #ede9fe;
+      --accent4: #5b21b6;
+      --card-bg: #ffffff;
+      --nav-bg: #1e1b2e;
+      --nav-text: #f8f8f6;
+      --border: #e0e0e0;
+      --shadow: 0 4px 20px rgba(124,58,237,0.10);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* 네비게이션 */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: var(--nav-bg); z-index: 1000;
+      height: 70px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+    }
+    .nav-logo { color: var(--nav-text); font-size: 1.3rem; font-weight: bold; letter-spacing: 2px; }
+    .nav-logo span { color: var(--accent2); }
+    .nav-links { display: flex; list-style: none; gap: 12px; }
+    .nav-links li a {
+      color: var(--nav-text); text-decoration: none;
+      padding: 12px 28px; border-radius: 30px;
+      font-size: 1rem; letter-spacing: 1px;
+      transition: all 0.3s; cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .nav-links li a:hover { border-color: var(--accent2); color: var(--accent2); }
+    .nav-links li a.active { background: var(--accent1); color: #fff; border-color: var(--accent1); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+    .hamburger span { display: block; width: 25px; height: 2px; background: var(--nav-text); transition: all 0.3s; }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 70px; left: 0; right: 0;
+      background: var(--nav-bg); z-index: 999; flex-direction: column; padding: 10px 0;
+    }
+    .mobile-menu a {
+      color: var(--nav-text); text-decoration: none; padding: 16px 40px;
+      font-size: 1rem; letter-spacing: 1px; border-bottom: 1px solid #2d2a3e;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .mobile-menu a:hover, .mobile-menu a.active { background: var(--accent1); }
+
+    /* 페이지 전환 */
+    .page { display: none; min-height: 100vh; padding-top: 70px; }
+    .page.active { display: block; }
+
+    /* 자기소개 레이아웃 */
+    .hero {
+      display: flex; align-items: center; justify-content: center;
+      min-height: calc(100vh - 70px);
+      padding: 60px 40px; gap: 80px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .hero-image-wrap { flex-shrink: 0; position: relative; }
+    .hero-image-wrap::before {
+      content: ''; position: absolute; top: 12px; left: 12px;
+      width: 100%; height: 100%; background: var(--accent1); border-radius: 16px; z-index: 0;
+    }
+    .hero-img { width: 260px; height: 320px; object-fit: cover; border-radius: 16px; position: relative; z-index: 1; }
+    .photo-placeholder {
+      width: 260px; height: 320px; border-radius: 16px;
+      background: linear-gradient(135deg, #ede9fe, #c4b5fd);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      position: relative; z-index: 1;
+    }
+    .photo-placeholder .icon { font-size: 3rem; }
+    .photo-placeholder p { color: #7c3aed; font-size: 0.85rem; text-align: center; }
+
+    .hero-text { flex: 1; max-width: 520px; }
+    .hero-tag {
+      display: inline-block; background: var(--accent3); color: var(--accent4);
+      font-size: 0.8rem; padding: 4px 14px; border-radius: 20px;
+      margin-bottom: 16px; font-family: 'Courier New', monospace; letter-spacing: 1px;
+    }
+    .hero-name { font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: bold; line-height: 1.1; margin-bottom: 8px; }
+    .hero-name .highlight { color: var(--accent1); }
+    .hero-sub { font-size: 1.05rem; color: var(--text-sub); margin-bottom: 20px; font-style: italic; }
+    .hero-desc { font-size: 0.95rem; line-height: 1.9; color: #444; margin-bottom: 24px; word-break: keep-all; }
+
+    .info-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .info-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--card-bg); border: 1.5px solid var(--border);
+      padding: 8px 16px; border-radius: 30px; font-size: 0.85rem; color: var(--text);
+    }
+    .info-tag .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .contact-links { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+    .contact-link {
+      display: flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 30px; font-size: 0.88rem;
+      text-decoration: none; font-family: 'Courier New', monospace;
+      transition: all 0.25s; border: 2px solid transparent;
+    }
+    .contact-link.email { background: var(--accent3); color: var(--accent4); border-color: var(--accent2); }
+    .contact-link.email:hover { background: var(--accent1); color: #fff; border-color: var(--accent1); }
+    .contact-link.github { background: var(--nav-bg); color: #fff; border-color: var(--nav-bg); }
+    .contact-link.github:hover { background: var(--accent4); border-color: var(--accent4); }
+
+    .subjects-section { margin-top: 4px; }
+    .subjects-title { font-size: 0.8rem; letter-spacing: 2px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 14px; }
+    .subject-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .subject-tag {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 8px; font-size: 0.82rem;
+      font-family: 'Courier New', monospace;
+      border-left: 3px solid var(--accent1);
+      background: var(--accent3); color: var(--accent4);
+      transition: all 0.2s; cursor: default;
+    }
+    .subject-tag:hover { background: var(--accent1); color: #fff; transform: translateX(3px); }
+
+    /* ===== 취미/관심사 페이지 ===== */
+    .hobby-header {
+      background: var(--nav-bg); color: var(--nav-text);
+      padding: 70px 40px 50px; text-align: center;
+    }
+    .hobby-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 12px; }
+    .hobby-header h1 span { color: var(--accent2); }
+    .hobby-header p { color: #aaa; font-size: 1rem; }
+
+    .tab-wrap { display: flex; justify-content: center; padding: 40px 20px 0; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 28px; border: 2px solid var(--accent1);
+      background: transparent; color: var(--accent1);
+      cursor: pointer; font-size: 0.9rem; letter-spacing: 1px;
+      transition: all 0.25s; font-family: 'Georgia', serif;
+    }
+    .tab-btn:first-child { border-radius: 30px 0 0 30px; }
+    .tab-btn:last-child  { border-radius: 0 30px 30px 0; }
+    .tab-btn.active { background: var(--accent1); color: #fff; }
+    .tab-btn:hover:not(.active) { background: var(--accent3); }
+
+    .tab-content { display: none; padding: 40px 20px 60px; max-width: 1100px; margin: 0 auto; }
+    .tab-content.active { display: block; }
+
+    /* 취미 카드 */
+    .hobby-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+    .hobby-card {
+      width: calc(33.333% - 14px);
+      background: var(--card-bg); border-radius: 16px;
+      border-top: 4px solid var(--accent1); box-shadow: var(--shadow);
+      overflow: hidden; transition: box-shadow 0.3s, border-top-color 0.3s;
+    }
+    .hobby-card:hover { box-shadow: 0 8px 28px rgba(124,58,237,0.18); border-top-color: var(--accent4); background: #faf5ff; }
+    .hobby-card-top { padding: 26px 22px 18px; display: flex; flex-direction: column; gap: 8px; }
+    .hobby-card-icon { font-size: 1.9rem; }
+    .hobby-card-title { font-size: 1.05rem; font-weight: bold; }
+    .hobby-card-short { font-size: 0.87rem; color: var(--text-sub); line-height: 1.6; }
+    .hobby-card-detail { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .hobby-card:hover .hobby-card-detail { max-height: 220px; }
+    .hobby-card-detail-inner { border-top: 1px solid var(--accent3); margin: 0 22px; padding: 12px 0 20px; }
+    .hobby-card-detail-inner p { font-size: 0.84rem; color: var(--text-sub); line-height: 1.7; margin-bottom: 10px; }
+    .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .detail-tag {
+      background: var(--accent3); color: var(--accent4);
+      padding: 4px 11px; border-radius: 20px; font-size: 0.77rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+    .card {
+      background: var(--card-bg); border-radius: 16px; padding: 28px;
+      box-shadow: var(--shadow); border-top: 4px solid transparent;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(124,58,237,0.15); background: #faf5ff; }
+    .card-icon { font-size: 2.2rem; margin-bottom: 14px; }
+    .card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .card p { font-size: 0.9rem; color: var(--text-sub); line-height: 1.7; }
+
+    /* 관심사 갤러리 */
+    .card-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 0 -28px;
+      overflow: hidden;
+      border-radius: 0 0 16px 16px;
+    }
+    .card-gallery-item {
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .card-gallery-item:only-child {
+      grid-column: 1 / -1;
+      aspect-ratio: 16/9;
+    }
+    .gallery-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s;
+    }
+    .card-gallery-item:hover .gallery-thumb {
+      transform: scale(1.05);
+    }
+
+    /* 갤러리 확대 모달 */
+    .gallery-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+    }
+    .gallery-modal.open { display: flex; }
+    .gallery-modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+    }
+    .gallery-modal img {
+      position: relative;
+      z-index: 1;
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 12px;
+      animation: modalIn 0.3s ease;
+    }
+    .gallery-modal-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      z-index: 2;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .gallery-modal-close:hover { background: rgba(255,255,255,0.4); }
+
+    @media screen and (max-width: 600px) {
+      .card-gallery { grid-template-columns: 1fr; }
+    }
+
+    /* 맛집 페이지 */
+    #page-food {
+      position: relative;
+    }
+    #page-food::before {
+      content: 'KNU';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40vw;
+      font-weight: 900;
+      color: #1565c0;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 0;
+      letter-spacing: -2vw;
+      white-space: nowrap;
+      font-family: 'Georgia', serif;
+    }
+    #page-food > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .food-header {
+      background: var(--nav-bg); color: var(--nav-text);
+      padding: 70px 40px 50px; text-align: center;
+    }
+    .food-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 12px; }
+    .food-header h1 span { color: var(--accent2); }
+    .food-header p { color: #aaa; font-size: 1rem; }
+
+    /* 카테고리 필터 버튼 */
+    .filter-wrap {
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 10px; padding: 36px 20px 0;
+    }
+    .filter-btn {
+      padding: 9px 22px; border-radius: 30px;
+      border: 2px solid var(--border); background: var(--card-bg);
+      color: var(--text-sub); cursor: pointer; font-size: 0.88rem;
+      font-family: 'Georgia', serif; transition: all 0.22s;
+    }
+    .filter-btn:hover { border-color: var(--accent2); color: var(--accent1); }
+    .filter-btn.active { background: var(--accent1); color: #fff; border-color: var(--accent1); }
+
+    /* 검색창 */
+    .search-wrap {
+      display: flex; justify-content: center;
+      padding: 20px 20px 0;
+    }
+    .search-input {
+      width: 100%; max-width: 420px;
+      padding: 10px 20px; border-radius: 30px;
+      border: 2px solid var(--border); font-size: 0.9rem;
+      font-family: 'Georgia', serif; outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent1); }
+
+    /* 맛집 카드 그리드 */
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 22px;
+      padding: 30px 20px 60px;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .food-card {
+      background: var(--card-bg); border-radius: 16px;
+      box-shadow: var(--shadow); overflow: hidden;
+      cursor: pointer; transition: transform 0.25s, box-shadow 0.25s;
+      border: 2px solid transparent;
+    }
+    .food-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(124,58,237,0.15); border-color: var(--accent2); }
+
+    .food-card-thumb {
+      height: 110px; display: flex; align-items: center;
+      justify-content: center; font-size: 3rem;
+    }
+    .food-card-body { padding: 18px 20px 20px; }
+    .food-card-top-row {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 6px;
+    }
+    .food-card-name { font-size: 1.05rem; font-weight: bold; }
+    .food-card-category {
+      font-size: 0.72rem; padding: 3px 10px; border-radius: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    .food-card-stars { font-size: 1rem; margin-bottom: 6px; letter-spacing: 1px; }
+    .food-card-desc { font-size: 0.85rem; color: var(--text-sub); line-height: 1.6; margin-bottom: 12px; }
+    .food-card-meta {
+      display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.78rem; color: var(--text-sub);
+    }
+    .food-card-meta span { display: flex; align-items: center; gap: 3px; }
+
+    /* 결과 없음 */
+    .no-result {
+      display: none; text-align: center; padding: 60px 20px;
+      color: var(--text-sub); font-size: 1rem; grid-column: 1/-1;
+    }
+
+    /* 모달 */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 2000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card-bg); border-radius: 20px;
+      max-width: 480px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-thumb {
+      height: 140px; display: flex; align-items: center;
+      justify-content: center; font-size: 4rem;
+      border-radius: 20px 20px 0 0;
+    }
+    .modal-body { padding: 24px 28px 28px; }
+    .modal-close {
+      position: absolute; top: 14px; right: 18px;
+      background: rgba(0,0,0,0.25); color: #fff;
+      border: none; border-radius: 50%; width: 32px; height: 32px;
+      font-size: 1rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: rgba(0,0,0,0.5); }
+    .modal-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 6px; }
+    .modal-category {
+      display: inline-block; font-size: 0.78rem; padding: 3px 12px;
+      border-radius: 20px; margin-bottom: 14px;
+      font-family: 'Courier New', monospace;
+    }
+    .modal-section { margin-bottom: 16px; }
+    .modal-section-title {
+      font-size: 0.75rem; letter-spacing: 2px; color: var(--text-sub);
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .modal-section p { font-size: 0.9rem; line-height: 1.7; color: #444; }
+    .modal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .modal-tag {
+      background: var(--accent3); color: var(--accent4);
+      padding: 4px 12px; border-radius: 20px; font-size: 0.8rem;
+      font-family: 'Courier New', monospace;
+    }
+    .modal-info-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.88rem; color: #444; margin-bottom: 8px;
+    }
+    .modal-info-row .label { color: var(--accent1); font-weight: bold; min-width: 48px; }
+
+    /* 배경 히어로 */
+    .bg-hero {
+      position: relative;
+      height: calc(100vh - 70px);
+      background: url('bg.jpg') center center / cover no-repeat;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bg-hero-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+    }
+    .bg-hero-content {
+      position: relative; z-index: 1;
+      text-align: center; color: #fff; padding: 20px;
+    }
+    .bg-hero-sub {
+      font-size: 0.85rem; letter-spacing: 4px;
+      color: var(--accent2); margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    .bg-hero-name {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: bold; line-height: 1.1; margin-bottom: 16px;
+    }
+    .bg-hero-desc {
+      font-size: 1.1rem; color: #ddd;
+      margin-bottom: 36px; font-style: italic;
+    }
+    .bg-hero-btn {
+      display: inline-block;
+      padding: 12px 32px; border: 2px solid #fff;
+      color: #fff; border-radius: 30px;
+      font-size: 0.9rem; letter-spacing: 2px;
+      cursor: pointer; transition: all 0.3s;
+      text-decoration: none;
+    }
+    .bg-hero-btn:hover {
+      background: var(--accent1); border-color: var(--accent1);
+    }
+
+    .bg-hero-name { color: #fff; }
+    .bg-hero-name #typingLine0 { color: #fff; }
+    .bg-hero-name #typingLine1 { color: var(--accent2); }
+    #typingCursor { background: #fff; }
+
+    /* 자기소개 본문 */
+    .hero-name-static {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: bold; line-height: 1.1; margin-bottom: 8px;
+      color: var(--accent1);
+    }
+
+    /* 연락처 폼 */
+    .contact-section {
+      background: var(--nav-bg);
+      padding: 80px 20px;
+    }
+    .contact-inner {
+      max-width: 900px; margin: 0 auto;
+    }
+    .contact-title {
+      text-align: center; color: #fff;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: 6px; margin-bottom: 10px;
+    }
+    .contact-sub {
+      text-align: center; color: #aaa;
+      font-size: 0.9rem; margin-bottom: 50px;
+    }
+    .contact-form-wrap {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 40px; align-items: start;
+    }
+    .contact-info { color: #ccc; }
+    .contact-info-label {
+      font-size: 0.78rem; letter-spacing: 2px;
+      color: var(--accent2); margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    .contact-info-row {
+      display: flex; gap: 16px;
+      font-size: 0.88rem; margin-bottom: 12px;
+    }
+    .contact-info-key {
+      color: var(--accent2); min-width: 50px; font-weight: bold;
+    }
+    .form-input {
+      width: 100%; padding: 12px 16px;
+      background: transparent;
+      border: 1px solid #444; border-radius: 6px;
+      color: #fff; font-size: 0.9rem;
+      font-family: 'Georgia', serif;
+      margin-bottom: 14px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--accent2); }
+    .form-input::placeholder { color: #666; }
+    .form-textarea { height: 130px; resize: none; }
+    .form-submit {
+      width: 100%; padding: 14px;
+      background: transparent; color: #fff;
+      border: 2px solid #fff; border-radius: 6px;
+      font-size: 0.9rem; letter-spacing: 3px;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'Georgia', serif;
+    }
+    .form-submit:hover {
+      background: var(--accent1); border-color: var(--accent1);
+    }
+
+    /* 푸터 */
+    footer {
+      background: var(--nav-bg);
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+    }
+    footer span { color: var(--accent2); }
+
+    /* 반응형 */
+    @media screen and (max-width: 900px) {
+      .hobby-card { width: calc(50% - 10px); }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+    @media screen and (max-width: 600px) {
+      nav { padding: 0 20px; height: 60px; }
+      .page { padding-top: 60px; }
+      .bg-hero { height: calc(100vh - 60px); }
+      .mobile-menu { top: 60px; }
+      .hero { flex-direction: column; padding: 40px 20px; gap: 40px; text-align: center; }
+      .photo-placeholder { width: min(260px, 80vw); height: auto; aspect-ratio: 4/5; }
+      .hero-img { width: min(260px, 80vw); height: auto; aspect-ratio: 4/5; }
+      .info-tags { justify-content: center; }
+      .contact-links { justify-content: center; }
+      .subject-tags { justify-content: center; }
+      .hobby-header { padding: 50px 20px 36px; }
+      .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
+      .hobby-card { width: 100%; }
+      .food-header { padding: 50px 20px 36px; }
+      .food-grid { grid-template-columns: 1fr; padding: 20px 16px 40px; }
+      .contact-form-wrap { grid-template-columns: 1fr; gap: 24px; }
+      .contact-section { padding: 50px 20px; }
+    }
+
+    /* 타이핑 커서 */
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      background: var(--accent1);
+      margin-left: 2px;
+      animation: blink 0.7s infinite;
+      vertical-align: baseline;
+      border-radius: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* 검색 결과 카운터 */
+    .food-counter {
+      text-align: center;
+      padding: 16px 20px 0;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      font-family: 'Courier New', monospace;
+    }
+    .food-counter span {
+      color: var(--accent1);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page.active { animation: fadeIn 0.4s ease; }
+  </style>
+</head>
+<body>
+
+<!-- 네비게이션 -->
+<nav>
+  <div class="nav-logo">KIM <span>NJ</span></div>
+  <ul class="nav-links">
+    <li><a href="#" class="nav-btn active" data-page="home">자기소개</a></li>
+    <li><a href="#" class="nav-btn" data-page="hobby">취미 &amp; 관심사</a></li>
+    <li><a href="#" class="nav-btn" data-page="food">강원대 맛집</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" class="nav-btn active" data-page="home">자기소개</a>
+  <a href="#" class="nav-btn" data-page="hobby">취미 &amp; 관심사</a>
+  <a href="#" class="nav-btn" data-page="food">강원대 맛집</a>
+</div>
+
+<!-- 자기소개 페이지 -->
+<div class="page active" id="page-home">
+
+  <!-- 배경 히어로 -->
+  <div class="bg-hero">
+    <div class="bg-hero-overlay"></div>
+    <div class="bg-hero-content">
+      <p class="bg-hero-sub">KANGWON NATIONAL UNIVERSITY</p>
+      <h1 class="bg-hero-name"><span id="typingText"></span><span class="typing-cursor" id="typingCursor"></span></h1>
+      <p class="bg-hero-desc">컴퓨터공학과 2학년</p>
+      <a class="bg-hero-btn" id="scrollDownBtn">↓ 더 보기</a>
+    </div>
+  </div>
+
+  
+  <div class="hero" id="introSection">
+    <div class="hero-image-wrap">
+      <img src="photo.jpg" alt="김남진 사진" class="hero-img">
+    </div>
+    <div class="hero-text">
+      <div class="hero-tag">✦ Hello, World!</div>
+      <h2 class="hero-name-static">김남진입니다</h2>
+      <p class="hero-sub">강원대학교 컴퓨터공학과 2학년</p>
+      <p class="hero-desc">
+        강원대학교 컴퓨터공학과에서 컴퓨터 공학 전공 지식과 다양한 프로그래밍 기술을 깊이 있게 학습하고 있는 2학년 김남진입니다.
+        이론에 그치지 않고 새로운 기술을 빠르게 습득하여 직접 구현하고 문제를 해결하는 과정에서 보람을 느낍니다.
+        전공 역량 강화를 위한 주도적인 학업 외에도, 다양한 취미 활동을 통해 삶의 긍정적인 에너지를 유지하며 꾸준히 성장해 나가고 있습니다.
+      </p>
+      <div class="info-tags">
+        <div class="info-tag"><div class="dot" style="background:var(--accent1)"></div>강원대학교</div>
+        <div class="info-tag"><div class="dot" style="background:var(--accent2)"></div>컴퓨터공학과 2학년</div>
+        <div class="info-tag"><div class="dot" style="background:var(--accent4)"></div>강원특별자치도 춘천시</div>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:knj731@naver.com" class="contact-link email">knj731@naver.com</a>
+        <a href="https://github.com/a77453864-max" target="_blank" class="contact-link github">GitHub</a>
+      </div>
+      <div class="subjects-section">
+        <p class="subjects-title">수강 중인 전공과목</p>
+        <div class="subject-tags">
+          <div class="subject-tag">웹프로그래밍</div>
+          <div class="subject-tag">자료구조</div>
+          <div class="subject-tag">리눅스프로그래밍</div>
+          <div class="subject-tag">선형대수학</div>
+          <div class="subject-tag">AI이산구조</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 연락처 폼 -->
+  <div class="contact-section">
+    <div class="contact-inner">
+      <h2 class="contact-title">CONTACT</h2>
+      <p class="contact-sub">궁금한 점이 있으시면 메시지를 남겨주세요</p>
+      <div class="contact-form-wrap">
+        <div class="contact-info">
+          <p class="contact-info-label">get in touch with me</p>
+          <div class="contact-info-row">
+            <span class="contact-info-key">Email</span>
+            <span>knj731@naver.com</span>
+          </div>
+          <div class="contact-info-row">
+            <span class="contact-info-key">GitHub</span>
+            <span>github.com/a77453864-max</span>
+          </div>
+        </div>
+        <div class="contact-form">
+          <input type="text" id="contactName" placeholder="이름 *" class="form-input">
+          <input type="email" id="contactEmail" placeholder="이메일 *" class="form-input">
+          <input type="text" id="contactSubject" placeholder="제목" class="form-input">
+          <textarea id="contactMessage" placeholder="메시지" class="form-input form-textarea"></textarea>
+          <button class="form-submit" id="formSubmit">SEND MESSAGE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 취미 & 관심사 페이지 -->
+<div class="page" id="page-hobby">
+  <div class="hobby-header">
+    <h1>취미 &amp; <span>관심사</span></h1>
+    <p>일상에서 즐기는 것들을 소개합니다</p>
+  </div>
+  <div class="tab-wrap">
+    <button class="tab-btn active" data-tab="tab-hobby">🎮 취미</button>
+    <button class="tab-btn" data-tab="tab-interest">💡 관심사</button>
+  </div>
+  <div class="tab-content active" id="tab-hobby">
+    <div class="hobby-grid">
+      <div class="hobby-card">
+        <div class="hobby-card-top">
+          <div class="hobby-card-icon">💻</div>
+          <div class="hobby-card-title">코딩</div>
+          <div class="hobby-card-short">직접 만들고 구현하는 재미에 빠져 있습니다.</div>
+        </div>
+        <div class="hobby-card-detail"><div class="hobby-card-detail-inner">
+          <p>수업에서 배운 내용을 직접 구현해 보면서 코딩의 재미를 알아가고 있습니다.</p>
+          <div class="detail-tags">
+            <span class="detail-tag">C</span><span class="detail-tag">Linux</span>
+            <span class="detail-tag">Java</span><span class="detail-tag">HTML/CSS</span>
+          </div>
+        </div></div>
+      </div>
+      <div class="hobby-card">
+        <div class="hobby-card-top">
+          <div class="hobby-card-icon">🎮</div>
+          <div class="hobby-card-title">게임</div>
+          <div class="hobby-card-short">친구들과 함께 즐기는 온라인 게임을 좋아합니다.</div>
+        </div>
+        <div class="hobby-card-detail"><div class="hobby-card-detail-inner">
+          <p>다양한 게임을 즐기지만 요즘은 이 게임들을 주로 하고 있습니다. 친구들과 팀을 맞춰 플레이할 때가 제일 재밌습니다.</p>
+          <div class="detail-tags">
+            <span class="detail-tag">리그 오브 레전드</span>
+            <span class="detail-tag">발로란트</span>
+            <span class="detail-tag">피파 온라인4</span>
+          </div>
+        </div></div>
+      </div>
+      <div class="hobby-card">
+        <div class="hobby-card-top">
+          <div class="hobby-card-icon">🎵</div>
+          <div class="hobby-card-title">음악 감상</div>
+          <div class="hobby-card-short">운동할 때나 이동할 때 항상 음악과 함께합니다.</div>
+        </div>
+        <div class="hobby-card-detail"><div class="hobby-card-detail-inner">
+          <p>분위기와 기분에 따라 다양한 장르를 골라 듣는 편입니다.</p>
+          <div class="detail-tags">
+            <span class="detail-tag">K-POP</span><span class="detail-tag">Pop</span><span class="detail-tag">J-POP</span>
+          </div>
+        </div></div>
+      </div>
+      <div class="hobby-card">
+        <div class="hobby-card-top">
+          <div class="hobby-card-icon">🏃</div>
+          <div class="hobby-card-title">운동</div>
+          <div class="hobby-card-short">시작한 지 얼마 안 됐지만 규칙적인 생활을 만들어가고 있습니다.</div>
+        </div>
+        <div class="hobby-card-detail"><div class="hobby-card-detail-inner">
+          <p>약 1년 전부터 꾸준히 운동을 시작했습니다. 체력이 곧 실력이라 생각하며 하루하루 이어가고 있습니다.</p>
+          <div class="detail-tags">
+            <span class="detail-tag">헬스</span><span class="detail-tag">러닝</span>
+          </div>
+        </div></div>
+      </div>
+      <div class="hobby-card">
+        <div class="hobby-card-top">
+          <div class="hobby-card-icon">🎹</div>
+          <div class="hobby-card-title">피아노 연주</div>
+          <div class="hobby-card-short">좋아하는 곡을 한 곡씩 완성해 나가는 성취감을 즐깁니다.</div>
+        </div>
+        <div class="hobby-card-detail"><div class="hobby-card-detail-inner">
+          <p>지금까지 쳐본 곡들 중 특히 기억에 남는 곡들입니다.</p>
+          <div class="detail-tags">
+            <span class="detail-tag">인생의 회전목마 (하울의 움직이는 성 OST)</span>
+            <span class="detail-tag">쇼팽 - 흑건</span>
+            <span class="detail-tag">Flower Dance</span>
+          </div>
+        </div></div>
+      </div>
+      <div class="hobby-card">
+        <div class="hobby-card-top">
+          <div class="hobby-card-icon">✈️</div>
+          <div class="hobby-card-title">여행</div>
+          <div class="hobby-card-short">새로운 곳의 분위기와 음식을 경험하는 걸 좋아합니다.</div>
+        </div>
+        <div class="hobby-card-detail"><div class="hobby-card-detail-inner">
+          <p>가본 곳 ✓ &nbsp; 가고 싶은 곳 ★</p>
+          <div class="detail-tags">
+            <span class="detail-tag">일본 오사카 ✓</span><span class="detail-tag">일본 교토 ✓</span>
+            <span class="detail-tag">제주도 ✓</span><span class="detail-tag">부산 ✓</span>
+            <span class="detail-tag">대전 ✓</span><span class="detail-tag">경주 ✓</span>
+            <span class="detail-tag">뉴욕 ★</span><span class="detail-tag">몽골 ★</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content" id="tab-interest">
+    <div class="card-grid">
+      <div class="card" style="border-top-color:var(--accent2);">
+        <div class="card-icon">🎬</div><h3>영화 &amp; 드라마</h3>
+        <p>다양한 장르의 영화와 드라마를 즐겨 봅니다. 볼 때만큼은 완전히 몰입하는 편입니다.</p>
+      </div>
+      <div class="card" style="border-top-color:var(--accent1);">
+        <div class="card-icon">🤖</div><h3>AI / 머신러닝</h3>
+        <p>ChatGPT 같은 AI 기술이 세상을 바꾸는 걸 보면서 관심을 갖게 됐습니다. 언젠가 직접 공부해보고 싶은 분야입니다.</p>
+      </div>
+
+      <!-- 사진 찍기 카드 -->
+      <div class="card" style="border-top-color:var(--accent1); padding-bottom: 0;">
+        <div class="card-icon">📸</div><h3>사진 찍기</h3>
+        <p style="margin-bottom: 16px;">여행을 가면 항상 카메라를 챙깁니다. 그 순간의 분위기를 사진으로 남기는 것을 좋아합니다.</p>
+        <div class="card-gallery">
+          <div class="card-gallery-item">
+            <img src="gallery1.jpg" alt="여행 사진 1" class="gallery-thumb">
+          </div>
+          <div class="card-gallery-item">
+            <img src="gallery2.jpg" alt="여행 사진 2" class="gallery-thumb">
+          </div>
+        </div>
+      </div>
+
+      <!-- 스포츠 관람 카드 -->
+      <div class="card" style="border-top-color:var(--accent4); padding-bottom: 0;">
+        <div class="card-icon">⚾</div><h3>스포츠 관람</h3>
+        <p style="margin-bottom: 16px;">직접 경기장에 가서 보는 현장감을 좋아합니다. 야구장 특유의 분위기가 매력적입니다.</p>
+        <div class="card-gallery">
+          <div class="card-gallery-item" style="max-width: 100%;">
+            <img src="gallery3.jpg" alt="야구장 사진" class="gallery-thumb">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="gallery-modal" id="galleryModal">
+      <div class="gallery-modal-overlay" id="galleryOverlay"></div>
+      <img src="" alt="확대 사진" id="galleryModalImg">
+      <button class="gallery-modal-close" id="galleryModalClose">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- 맛집 페이지 -->
+<div class="page" id="page-food">
+  <div class="food-header">
+    <h1>강원대 <span>맛집 지도</span></h1>
+    <p>춘천캠퍼스 근처, 직접 가본 맛집들을 소개합니다 🗺️</p>
+  </div>
+
+  
+  <div class="filter-wrap">
+    <button class="filter-btn active" data-cat="전체">🍽️ 전체</button>
+    <button class="filter-btn" data-cat="한식">🍚 한식</button>
+    <button class="filter-btn" data-cat="고기">🥩 고기</button>
+    <button class="filter-btn" data-cat="일식">🍣 일식</button>
+    <button class="filter-btn" data-cat="양식">🍝 양식</button>
+  </div>
+
+  
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="foodSearch" placeholder="🔍 가게 이름으로 검색...">
+  </div>
+
+  
+  <div class="food-counter" id="foodCounter">총 <span id="countNum">0</span>개의 맛집</div>
+
+  
+  <div class="food-grid" id="foodGrid">
+    <div class="no-result" id="noResult">😢 검색 결과가 없습니다</div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-thumb" id="modalThumb"></div>
+    <div class="modal-body">
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-category" id="modalCategory"></div>
+      <div id="modalStars" style="margin-bottom:14px;"></div>
+      <div class="modal-section">
+        <div class="modal-section-title">소개</div>
+        <p id="modalDesc"></p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">대표 메뉴</div>
+        <div class="modal-tags" id="modalMenus"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">정보</div>
+        <div class="modal-info-row"><span class="label">📍 위치</span><span id="modalAddr"></span></div>
+        <div class="modal-info-row"><span class="label">💰 가격대</span><span id="modalPrice"></span></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">특징</div>
+        <div class="modal-tags" id="modalTags"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 푸터 -->
+<footer>
+  © 2026 <span>김남진</span> · 강원대학교 컴퓨터공학과
+</footer>
+
+<!-- JavaScript -->
+<script>
+$(document).ready(function () {
+
+  /* 타이핑 효과 */
+  var typingLines = ['안녕하세요,', '김남진입니다'];
+  var typingColors = [null, 'var(--accent2)'];
+  var lineIdx = 0;
+  var charIdx = 0;
+  var typingTimer = null;
+
+  function startTyping() {
+    $('#typingText').empty();
+    lineIdx = 0; charIdx = 0;
+    clearInterval(typingTimer);
+    typeChar();
+  }
+
+  function typeChar() {
+    if (lineIdx >= typingLines.length) {
+      setTimeout(function () { $('#typingCursor').hide(); }, 800);
+      return;
+    }
+
+    var line = typingLines[lineIdx];
+    var color = typingColors[lineIdx];
+
+    if (charIdx < line.length) {
+      var ch = line[charIdx];
+      var $span = $('#typingLine' + lineIdx);
+      if ($span.length === 0) {
+        var style = color ? ' style="color:' + color + '"' : '';
+        $('#typingText').append('<span id="typingLine' + lineIdx + '"' + style + '></span>');
+        $span = $('#typingLine' + lineIdx);
+      }
+      $span.text($span.text() + ch);
+      charIdx++;
+      typingTimer = setTimeout(typeChar, 80);
+    } else {
+      lineIdx++;
+      charIdx = 0;
+      if (lineIdx < typingLines.length) {
+        $('#typingText').append('<br>');
+      }
+      typingTimer = setTimeout(typeChar, 200);
+    }
+  }
+
+  
+  startTyping();
+
+  /* 검색 카운터 */
+  function updateCounter(count) {
+    $('#countNum').text(count);
+  }
+  var foods = [
+    /* 한식 */
+    {
+      name: '장할매국밥', cat: '한식', emoji: '🍲', color: '#fff3e0', stars: 4,
+      desc: '강원대 후문 먹자골목에 위치한 국밥 전문점. 반찬도 푸짐하게 나와 많이 가게 되는 곳입니다.',
+      menus: ['국밥', '순대국밥', '수육'],
+      addr: '강원 춘천시 백령로138번길 52', price: '1만원 내외',
+      tags: ['후문 근처', '든든한 한끼', '구수한 국물', '혼밥 가능']
+    },
+    {
+      name: '만석식당 강원대점', cat: '한식', emoji: '🥣', color: '#fff8e1', stars: 4,
+      desc: '강원대 후문 근처 백반 전문 한식당. 매일 바뀌는 반찬과 따뜻한 국이 함께 나와 집밥 같은 느낌이 드는 곳입니다.',
+      menus: ['백반', '제육볶음', '된장찌개'],
+      addr: '강원 춘천시 백령로138번길 35', price: '1만원 내외',
+      tags: ['후문 근처', '백반', '가성비', '집밥 느낌']
+    },
+    {
+      name: '진본식당', cat: '한식', emoji: '🥘', color: '#fce4ec', stars: 3,
+      desc: '강원대 인근 아파트 상가에 위치한 한식당. 동네 단골들이 자주 찾는 소박하고 맛있는 식당입니다.',
+      menus: ['한식 정식', '찌개', '볶음밥'],
+      addr: '강원 춘천시 백령로75번길 7 신아아파트 상가 101호', price: '1만원 내외',
+      tags: ['로컬 맛집', '소박한 분위기', '가성비', '단골 맛집']
+    },
+    /* 고기 */
+    {
+      name: '곱돌생삼겹살', cat: '고기', emoji: '🥩', color: '#ffebee', stars: 4,
+      desc: '강원대 후문 근처 삼겹살 전문점. 곱돌판에 구워 먹는 삼겹살이 특징으로 고기가 잘 익고 기름기가 적어 맛있습니다.',
+      menus: ['생삼겹살', '목살', '된장찌개'],
+      addr: '강원 춘천시 백령로138번길 55', price: '1~2만원',
+      tags: ['후문 근처', '삼겹살', '고기 맛집', '단체 회식']
+    },
+    {
+      name: '신깡통뒷고기 춘천강원대점', cat: '고기', emoji: '🍖', color: '#fbe9e7', stars: 4,
+      desc: '뒷고기 전문 프랜차이즈 강원대점. 저렴한 가격에 고기를 실컷 먹을 수 있어 학생들 사이에서 인기가 많습니다.',
+      menus: ['뒷고기', '삼겹살', '냉면'],
+      addr: '강원 춘천시 백령로138번길 18 1층', price: '1~2만원',
+      tags: ['후문 근처', '가성비', '학생 맛집', '뒷고기']
+    },
+    {
+      name: '숨어있는 고깃집', cat: '고기', emoji: '🔥', color: '#fff3e0', stars: 5,
+      desc: '이름처럼 골목 안에 숨어있는 고기집. 매운 갈비찜이 시그니처 메뉴로 당면이 넉넉하고 고기가 쫄깃해 자꾸 생각나는 맛입니다.',
+      menus: ['매운 갈비찜', '갈비탕', '생삼겹살'],
+      addr: '강원 춘천시 백령로138번길 56-1', price: '1~2만원',
+      tags: ['매운 맛', '갈비찜', '후문 근처', '단체 모임']
+    },
+    /* 일식 */
+    {
+      name: '리네', cat: '일식', emoji: '🍣', color: '#e3f2fd', stars: 4,
+      desc: '강원대 근처 일식 전문점. 깔끔하고 정갈한 일본 가정식을 즐길 수 있는 곳으로 분위기도 좋아 편하게 식사하기 좋습니다.',
+      menus: ['일본 정식', '우동', '덮밥류'],
+      addr: '강원 춘천시 백령로 126 1층, 2층', price: '1~2만원',
+      tags: ['깔끔한 분위기', '일본 가정식', '데이트', '혼밥 가능']
+    },
+    {
+      name: '별식당 강원대점', cat: '일식', emoji: '🍱', color: '#e8eaf6', stars: 3,
+      desc: '강원대 근처 일식 도시락·덮밥 전문점. 가성비 좋은 메뉴 구성으로 학생들이 즐겨 찾는 곳입니다.',
+      menus: ['도시락', '덮밥', '우동'],
+      addr: '강원 춘천시 서부대성로 241', price: '1~2만원',
+      tags: ['가성비', '학생 맛집', '빠른 식사', '도시락']
+    },
+    {
+      name: '오믈하우스', cat: '일식', emoji: '🍳', color: '#f3e5f5', stars: 4,
+      desc: '오믈렛 전문점으로 강원대 근처에서 색다른 메뉴를 원할 때 찾게 되는 곳. 폭신한 오믈렛이 밥 위에 올라가는 비주얼이 인상적입니다.',
+      menus: ['오므라이스', '오믈렛 정식', '크림 오므라이스'],
+      addr: '강원 춘천시 서부대성로227번길 24 2층', price: '1만원 내외',
+      tags: ['오므라이스', '독특한 메뉴', '데이트']
+    },
+    /* 양식 */
+    {
+      name: '단하비', cat: '양식', emoji: '🍝', color: '#e8f5e9', stars: 5,
+      desc: '강원대 근처 파스타·피자 전문 양식당. 창가 자리가 분위기 있어 데이트 코스로 인기가 많습니다. 음식 맛도 좋고 플레이팅도 예쁩니다.',
+      menus: ['파스타', '피자', '리조또', '스테이크'],
+      addr: '강원도 춘천시 서부대성로235 2층', price: '1~2만원',
+      tags: ['데이트 코스', '분위기 좋음', '창가 자리', '파스타']
+    },
+    {
+      name: '브릭스피자', cat: '양식', emoji: '🍕', color: '#fff9c4', stars: 3,
+      desc: '강원대 인근 피자 전문점. 다양한 종류의 피자를 즐길 수 있고 가격 대비 양이 넉넉해 친구들과 함께 먹기 좋습니다.',
+      menus: ['피자', '파스타', '치킨'],
+      addr: '강원 춘천시 서부대성로 255, 2층', price: '1~2만원',
+      tags: ['피자 맛집', '단체 식사', '넉넉한 양', '친구와 함께']
+    },
+    {
+      name: '우리돈까스', cat: '양식', emoji: '🍽️', color: '#f9fbe7', stars: 4,
+      desc: '강원대 후문 근처 가성비 돈까스 맛집. 기본 돈까스가 7,500원으로 부담 없이 자주 찾게 되는 곳이고, 곱빼기도 1,000원 추가면 돼서 든든하게 먹을 수 있습니다.',
+      menus: ['우리돈까스 7,500원', '체다치즈돈까스', '쏘세지돈까스'],
+      addr: '강원 춘천시 서부대성로 229-1 1층 우측상가(효자동)', price: '1만원 내외',
+      tags: ['가성비', '바삭한 돈까스', '혼밥 가능', '오픈 주방']
+    }
+  ];
+
+  /* 맛집 카드 렌더링 */
+  function renderCards(list) {
+    $('#foodGrid .food-card').remove();
+    if (list.length === 0) {
+      $('#noResult').show();
+      updateCounter(0);
+      return;
+    }
+    $('#noResult').hide();
+    updateCounter(list.length);
+
+    $.each(list, function (i, f) {
+      
+      var catColor = {
+        '한식': '#fff3e0', '고기': '#ffebee', '일식': '#e3f2fd',
+        '양식': '#e8f5e9', '카페': '#ede9fe'
+      }[f.cat] || '#f5f5f5';
+      var catText = {
+        '한식': '#e65100', '고기': '#c62828', '일식': '#1565c0',
+        '양식': '#2e7d32', '카페': '#5b21b6'
+      }[f.cat] || '#333';
+
+      var stars = '';
+      for (var s = 1; s <= 5; s++) {
+        stars += '<span style="color:' + (s <= f.stars ? '#f59e0b' : '#d1d5db') + '">★</span>';
+      }
+
+      var card = $(
+        '<div class="food-card" data-idx="' + i + '">' +
+          '<div class="food-card-thumb" style="background:' + f.color + '">' + f.emoji + '</div>' +
+          '<div class="food-card-body">' +
+            '<div class="food-card-top-row">' +
+              '<div class="food-card-name">' + f.name + '</div>' +
+              '<span class="food-card-category" style="background:' + catColor + ';color:' + catText + '">' + f.cat + '</span>' +
+            '</div>' +
+            '<div class="food-card-stars">' + stars + '</div>' +
+            '<div class="food-card-desc">' + f.desc.substring(0, 60) + '...</div>' +
+            '<div class="food-card-meta">' +
+              '<span>📍 ' + f.addr.substring(0, 20) + '...</span>' +
+              '<span>💰 ' + f.price + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+      $('#foodGrid').append(card);
+    });
+  }
+
+  
+  renderCards(foods);
+
+  /* 카테고리 필터 */
+  var currentCat = '전체';
+  var currentSearch = '';
+
+  function applyFilter() {
+    var filtered = foods.filter(function (f) {
+      var catOk = (currentCat === '전체') || (f.cat === currentCat);
+      var searchOk = (currentSearch === '') ||
+        f.name.indexOf(currentSearch) !== -1;
+      return catOk && searchOk;
+    });
+    renderCards(filtered);
+    
+    bindCardClick();
+  }
+
+  $('.filter-btn').click(function () {
+    currentCat = $(this).data('cat');
+    $('.filter-btn').removeClass('active');
+    $(this).addClass('active');
+    applyFilter();
+  });
+
+  /* 검색 */
+  $('#foodSearch').on('input', function () {
+    currentSearch = $(this).val().trim();
+    applyFilter();
+  });
+
+  /* 카드 클릭 모달 */
+  function bindCardClick() {
+    $(document).off('click', '.food-card').on('click', '.food-card', function () {
+      var idx = $(this).data('idx');
+      var f = foods[idx];
+
+      var catColor = {
+        '한식': '#fff3e0', '고기': '#ffebee', '일식': '#e3f2fd',
+        '양식': '#e8f5e9', '카페': '#ede9fe'
+      }[f.cat] || '#f5f5f5';
+      var catText = {
+        '한식': '#e65100', '고기': '#c62828', '일식': '#1565c0',
+        '양식': '#2e7d32', '카페': '#5b21b6'
+      }[f.cat] || '#333';
+
+      
+      $('#modalThumb').css('background', f.color).text(f.emoji);
+      $('#modalName').text(f.name);
+      $('#modalCategory').css({ background: catColor, color: catText }).text(f.cat);
+
+      var modalStars = '';
+      for (var ms = 1; ms <= 5; ms++) {
+        modalStars += '<span style="color:' + (ms <= f.stars ? '#f59e0b' : '#d1d5db') + ';font-size:1.2rem;">★</span>';
+      }
+      $('#modalStars').html(modalStars);
+      $('#modalDesc').text(f.desc);
+      $('#modalAddr').text(f.addr);
+      $('#modalPrice').text(f.price);
+
+      
+      $('#modalMenus').empty();
+      $.each(f.menus, function (i, m) {
+        $('#modalMenus').append('<span class="modal-tag">' + m + '</span>');
+      });
+
+      
+      $('#modalTags').empty();
+      $.each(f.tags, function (i, t) {
+        $('#modalTags').append('<span class="modal-tag">' + t + '</span>');
+      });
+
+      $('#modalOverlay').addClass('open');
+    });
+  }
+  bindCardClick();
+
+  /* 모달 닫기 */
+  $('#modalClose, #modalOverlay').click(function (e) {
+    if (e.target === document.getElementById('modalOverlay') || e.target === document.getElementById('modalClose')) {
+      $('#modalOverlay').removeClass('open');
+    }
+  });
+
+  /* 스크롤 버튼 */
+  $('#scrollDownBtn').click(function () {
+    var top = $('#introSection').offset().top;
+    $('html, body').animate({ scrollTop: top - 70 }, 600);
+  });
+
+  /* 이메일 전송 */
+  $('#formSubmit').click(function () {
+    var name = $('#contactName').val().trim();
+    var email = $('#contactEmail').val().trim();
+    var subject = $('#contactSubject').val().trim();
+    var message = $('#contactMessage').val().trim();
+
+    if (!name || !email) {
+      alert('이름과 이메일은 필수입니다!');
+      return;
+    }
+
+    var mailSubject = subject || '안녕하세요, ' + name + '입니다';
+    var mailBody = '이름: ' + name + '\n이메일: ' + email + '\n\n' + message;
+    var mailtoLink = 'mailto:knj731@naver.com' +
+      '?subject=' + encodeURIComponent(mailSubject) +
+      '&body=' + encodeURIComponent(mailBody);
+
+    window.location.href = mailtoLink;
+  });
+
+  /* 페이지 이동 */
+  function showPage(pageId) {
+    $('.page').removeClass('active');
+    $('#page-' + pageId).addClass('active');
+    $('.nav-btn').removeClass('active');
+    $('.nav-btn[data-page="' + pageId + '"]').addClass('active');
+    $('#mobileMenu').hide();
+    
+    if (pageId === 'home') {
+      $('#typingCursor').show();
+      startTyping();
+    }
+    window.scrollTo(0, 0);
+  }
+
+  $(document).on('click', '.nav-btn', function (e) {
+    e.preventDefault();
+    showPage($(this).data('page'));
+  });
+
+  /* 햄버거 메뉴 */
+  $('#hamburger').click(function () {
+    $('#mobileMenu').toggle();
+  });
+
+  /* 탭 전환 */
+  $('.tab-btn').click(function () {
+    var tabId = $(this).data('tab');
+    $('.tab-btn').removeClass('active');
+    $(this).addClass('active');
+    $('.tab-content').removeClass('active');
+    $('#' + tabId).addClass('active');
+  });
+
+  /* 갤러리 확대 */
+  $(document).on('click', '.card-gallery-item', function () {
+    var src = $(this).find('img').attr('src');
+    $('#galleryModalImg').attr('src', src);
+    $('#galleryModal').addClass('open');
+  });
+  $('#galleryModalClose, #galleryOverlay').click(function () {
+    $('#galleryModal').removeClass('open');
+  });
+
+  /* 전공과목 태그 hover */
+  $('.subject-tag').hover(
+    function () { $(this).css({ 'background': '#7c3aed', 'color': '#fff' }); },
+    function () { $(this).css({ 'background': '#ede9fe', 'color': '#5b21b6' }); }
+  );
+
+
+});
+</script>
+</body>
+</html>
